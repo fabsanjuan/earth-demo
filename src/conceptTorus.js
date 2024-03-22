@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 
+
 // Size of canvas.
 const canvas = document.querySelector('.webgl');
 const width = window.innerWidth;

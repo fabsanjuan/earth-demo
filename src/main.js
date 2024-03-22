@@ -1,6 +1,9 @@
 import * as THREE from 'three';
 import vertexShader from '../shaders/vertex.glsl';
 import fragmentShader from '../shaders/fragment.glsl';
+import earthMapBumped from '../public/assets/earthMapBumped.jpg';
+import earthMapLights from '../public/assets/earthMapLights.jpg';
+import earthMapClouds from '../public/assets/earthMapClouds.jpg';
 
 console.log(vertexShader, fragmentShader);
 
@@ -25,7 +28,7 @@ const textureLoad = new THREE.TextureLoader();
 const earthGroup = new THREE.Group();
 earthGroup.rotation.z = (-23.4 * Math.PI) / 180;
 const geometry = new THREE.IcosahedronGeometry(1, 6);
-const material = new THREE.MeshStandardMaterial( {map: textureLoad.load('./assets/earthMapBumped.jpg')} );
+const material = new THREE.MeshStandardMaterial( {map: textureLoad.load(earthMapBumped)} );
 const earthMesh = new THREE.Mesh(geometry, material);
 scene.add(earthGroup);
 earthGroup.add(earthMesh);
@@ -43,7 +46,7 @@ earthGroup.add(glowMesh);
 
 // Add the city lights as a blended mesh.
 const lightMaterial = new THREE.MeshBasicMaterial( {
-    map: textureLoad.load('./assets/earthMapLights.jpg'), 
+    map: textureLoad.load(earthMapLights), 
     blending: THREE.CustomBlending,
     blendEquation: THREE.AddEquation,
     blendSrc: THREE.SrcColorFactor,
@@ -54,7 +57,7 @@ earthGroup.add(lightMesh);
 
 // Add the clouds as a blended mesh.
 const cloudMaterial = new THREE.MeshBasicMaterial( {
-    map: textureLoad.load('./assets/earthMapClouds.jpg'),
+    map: textureLoad.load(earthMapClouds),
     blending: THREE.CustomBlending,
     blendEquation: THREE.AddEquation,
     blendSrc: THREE.DstColorFactor,
