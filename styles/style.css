@@ -61,9 +61,19 @@ html, body {
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
+    width: 100vw;
     border-bottom: 1px solid #fff;
-    transform: scaleX(1);
+    transform: scaleX(0);
+    transform-origin: center;
+}
+
+@keyframes extendLine {
+    from {
+        transform: scaleX(0);
+    }
+    to {
+        transform: scaleX(1);
+    }
 }
 
 .heading h1 {
@@ -73,16 +83,44 @@ html, body {
     text-align: right;
 }
 
-h1 p {
-    flex-basis: 0;
-    flex-grow: 1;
-    clip-path: polygon(0 0, 100% 0, 100% 0, 0 0);
+.heading.animate-line:before {
+    animation: extendLine 1.5s ease-out forwards;
+}
+
+@keyframes dropDown {
+    from {
+        opacity: 0;
+        transform: translateY(-3rem);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+h1 {
+    opacity: 0;
 }
 
 p {
     font-size: 1.25rem;
     width: 40vw;
+    opacity: 0;
 }
+
+.animate-drop-down {
+    animation: dropDown 2s ease forwards;
+}
+
+h1.animate-drop-down {
+    animation-delay: 1.75s;
+}
+
+p.animate-drop-down {
+    animation-delay: 2.75s;
+}
+
 
 h3 {
     position: absolute;

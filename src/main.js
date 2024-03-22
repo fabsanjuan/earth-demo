@@ -33,19 +33,12 @@ camera.position.z = 40;
 // Setup display variables.
 const backgroundCover = document.querySelector('.container-profile');
 const switchBtn = document.querySelector('.to-earth');
+const heading = document.querySelector('.heading');
+const h1Element = document.querySelector('.container-profile h1');
+const pElement = document.querySelector('.container-profile p')
 
   // Objects
   const textureLoad = new THREE.TextureLoader();
-
-  // Animation.
-  function animation(time) {
-    earthMesh.rotation.y = time / 8000;
-    lightMesh.rotation.y = time / 8000;
-    cloudMesh.rotation.y = time / 8000;
-    glowMesh.rotation.y = time / 8000;
-
-    renderer.render(scene, camera);
-}
 
 // Global renderer.
 const renderer = new THREE.WebGLRenderer( {
@@ -55,6 +48,14 @@ const renderer = new THREE.WebGLRenderer( {
 renderer.setSize(width, height);
 document.body.appendChild(renderer.domElement);
 profileDisplay();
+
+// Handle window resize.
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+}
+window.addEventListener('resize', onWindowResize, false);
 
 // Earth config
 function earthDisplay() {
@@ -139,6 +140,18 @@ function earthDisplay() {
 function profileDisplay() {
     camera.position.z = 40;
     renderer.setClearColor(new THREE.Color('#21282a'), 1);
+
+    // heading animations.
+    heading.classList.remove('animate-line'); // .remove does not throw an error - its failsafe.
+    h1Element.classList.remove('animate-drop-down');
+    pElement.classList.remove('animate-drop-down');
+    void heading.offsetWidth; // Trigger reflow and make the DOM Work For It!!
+    void h1Element.offsetWidth;
+    void pElement.offsetWidth;
+    heading.classList.add('animate-line');
+    h1Element.classList.add('animate-drop-down');
+    pElement.classList.add('animate-drop-down');
+
 
     // Objects.
     const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
