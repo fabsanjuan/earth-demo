@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "earthDemo.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vite",
@@ -13,7 +14,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "vite": "^5.2.2"
+    "vite": "^5.2.2",
+    "vite-plugin-string": "^1.2.3"
   },
   "dependencies": {
     "gh-pages": "^6.1.1",

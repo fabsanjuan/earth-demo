@@ -1,6 +1,6 @@
 import * as THREE from 'three';
-import vertexShader from './shaders/vertex.glsl';
-import fragmentShader from './shaders/fragment.glsl';
+import vertexShader from '../shaders/vertex.glsl';
+import fragmentShader from '../shaders/fragment.glsl';
 
 console.log(vertexShader, fragmentShader);
 
@@ -25,7 +25,7 @@ const textureLoad = new THREE.TextureLoader();
 const earthGroup = new THREE.Group();
 earthGroup.rotation.z = (-23.4 * Math.PI) / 180;
 const geometry = new THREE.IcosahedronGeometry(1, 6);
-const material = new THREE.MeshStandardMaterial( {map: textureLoad.load('assets/earthMapBumped.jpg')} );
+const material = new THREE.MeshStandardMaterial( {map: textureLoad.load('./assets/earthMapBumped.jpg')} );
 const earthMesh = new THREE.Mesh(geometry, material);
 scene.add(earthGroup);
 earthGroup.add(earthMesh);
@@ -43,7 +43,7 @@ earthGroup.add(glowMesh);
 
 // Add the city lights as a blended mesh.
 const lightMaterial = new THREE.MeshBasicMaterial( {
-    map: textureLoad.load('assets/earthMapLights.jpg'), 
+    map: textureLoad.load('./assets/earthMapLights.jpg'), 
     blending: THREE.CustomBlending,
     blendEquation: THREE.AddEquation,
     blendSrc: THREE.SrcColorFactor,
@@ -54,7 +54,7 @@ earthGroup.add(lightMesh);
 
 // Add the clouds as a blended mesh.
 const cloudMaterial = new THREE.MeshBasicMaterial( {
-    map: textureLoad.load('assets/earthMapClouds.jpg'),
+    map: textureLoad.load('./assets/earthMapClouds.jpg'),
     blending: THREE.CustomBlending,
     blendEquation: THREE.AddEquation,
     blendSrc: THREE.DstColorFactor,
@@ -68,9 +68,9 @@ earthGroup.add(cloudMesh);
 const starsCoords = [];
 
 for (let i = 0; i < 10000; i++) {
-    const x = THREE.MathUtils.randFloatSpread(1000);
-    const y = THREE.MathUtils.randFloatSpread(1000);
-    const z = THREE.MathUtils.randFloatSpread(5000);
+    const x = THREE.MathUtils.randFloatSpread(2000);
+    const y = THREE.MathUtils.randFloatSpread(2000);
+    const z = THREE.MathUtils.randFloatSpread(2000);
 
     starsCoords.push(x, y, z);
 }
