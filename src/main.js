@@ -1,100 +1,44 @@
 import * as THREE from 'three';
 import vertexShader from '../shaders/vertex.glsl';
 import fragmentShader from '../shaders/fragment.glsl';
-import earthMapBumped from '../public/assets/earthMapBumped.jpg';
-import earthMapLights from '../public/assets/earthMapLights.jpg';
-import earthMapClouds from '../public/assets/earthMapClouds.jpg';
-
-console.log(vertexShader, fragmentShader);
+import earthMapBumped from './assets/earthMapBumped.jpg';
+import earthMapLights from './assets/earthMapLights.jpg';
+import earthMapClouds from './assets/earthMapClouds.jpg';
 
 // Set the app width and height to window dimensions.
 const canvas = document.querySelector('.webgl');
 const width = window.innerWidth;
 const height = window.innerHeight;
 
+// Mouse movement.
+document.addEventListener('mousemove', particleMovement);
+let mouseX = 0
+let mouseY = 0
+let mouseMove = false;
+
+function particleMovement(event) {
+    mouseX = event.clientX;
+    mouseY = event.clientY;
+    mouseMove = true;
+}
+document.addEventListener('mouseleave', () => {
+    mouseMove = false;
+})
+
 // Setup a scene, camera, and basic object props.
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(75, width / height, 0.01, 1000);
-camera.position.z = 3.5;
+camera.position.z = 40;
 
-// Add a light to the scene.
-const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-directionalLight.position.set(-4, 0.25, 2.5);
-scene.add(directionalLight);
+// Setup display variables.
+const backgroundCover = document.querySelector('.container-profile');
+const switchBtn = document.querySelector('.to-earth');
 
-// 3D Objects are made of vertices and edges (geometry), type of material, a mesh which combines the two.
-const textureLoad = new THREE.TextureLoader();
+  // Objects
+  const textureLoad = new THREE.TextureLoader();
 
-const earthGroup = new THREE.Group();
-earthGroup.rotation.z = (-23.4 * Math.PI) / 180;
-const geometry = new THREE.IcosahedronGeometry(1, 6);
-const material = new THREE.MeshStandardMaterial( {map: textureLoad.load(earthMapBumped)} );
-const earthMesh = new THREE.Mesh(geometry, material);
-scene.add(earthGroup);
-earthGroup.add(earthMesh);
-
-// Add the fresnel texture to the earth.
-const glowMaterial = new THREE.ShaderMaterial({
-    vertexShader,  // vertexShader: vertexShader,
-    fragmentShader,  // fragmentShader: fragmentShader,
-    blending: THREE.AdditiveBlending,
-    side: THREE.BackSide,
-})
-const glowMesh = new THREE.Mesh(geometry, glowMaterial);
-glowMesh.scale.set(1.1, 1.1, 1.1);
-earthGroup.add(glowMesh);
-
-// Add the city lights as a blended mesh.
-const lightMaterial = new THREE.MeshBasicMaterial( {
-    map: textureLoad.load(earthMapLights), 
-    blending: THREE.CustomBlending,
-    blendEquation: THREE.AddEquation,
-    blendSrc: THREE.SrcColorFactor,
-    blendDst: THREE.OneFactor,
-    });
-const lightMesh = new THREE.Mesh(geometry, lightMaterial);
-earthGroup.add(lightMesh);
-
-// Add the clouds as a blended mesh.
-const cloudMaterial = new THREE.MeshBasicMaterial( {
-    map: textureLoad.load(earthMapClouds),
-    blending: THREE.CustomBlending,
-    blendEquation: THREE.AddEquation,
-    blendSrc: THREE.DstColorFactor,
-    blendDst: THREE.OneFactor,
-    });
-const cloudMesh = new THREE.Mesh(geometry, cloudMaterial);
-cloudMesh.scale.setScalar(1.003);
-earthGroup.add(cloudMesh);
-
-// Add stars.
-const starsCoords = [];
-
-for (let i = 0; i < 10000; i++) {
-    const x = THREE.MathUtils.randFloatSpread(2000);
-    const y = THREE.MathUtils.randFloatSpread(2000);
-    const z = THREE.MathUtils.randFloatSpread(2000);
-
-    starsCoords.push(x, y, z);
-}
-
-const starsGeometry = new THREE.BufferGeometry();
-starsGeometry.setAttribute( 'position', new THREE.Float32BufferAttribute( starsCoords, 3 ) );
-const starsMaterial = new THREE.PointsMaterial( { color: 0xaaaaaa } );
-const stars = new THREE.Points( starsGeometry, starsMaterial );
-scene.add( stars );
-
-// Render the scene
-const renderer = new THREE.WebGLRenderer( {
-    antialias: true,
-    canvas: canvas
-} ); // Antialias sharpens the ragged edges of the objects.
-renderer.setSize(width, height);
-renderer.setAnimationLoop(animation);
-document.body.appendChild(renderer.domElement);
-
-// Animation.
-function animation(time) {
+  // Animation.
+  function animation(time) {
     earthMesh.rotation.y = time / 8000;
     lightMesh.rotation.y = time / 8000;
     cloudMesh.rotation.y = time / 8000;
@@ -102,6 +46,196 @@ function animation(time) {
 
     renderer.render(scene, camera);
 }
+
+// Global renderer.
+const renderer = new THREE.WebGLRenderer( {
+    antialias: true,
+    canvas: canvas
+} ); // Antialias sharpens the ragged edges of the objects.
+renderer.setSize(width, height);
+document.body.appendChild(renderer.domElement);
+profileDisplay();
+
+// Earth config
+function earthDisplay() {
+    camera.position.z = 3.5;
+    renderer.setAnimationLoop(animation);
+    renderer.setClearColor(new THREE.Color(0x000000, 0));
+
+    // Objects
+    const earthGroup = new THREE.Group();
+    earthGroup.rotation.z = (-23.4 * Math.PI) / 180;
+    const geometry = new THREE.IcosahedronGeometry(1, 6);
+    const material = new THREE.MeshStandardMaterial( {map: textureLoad.load(earthMapBumped)} );
+    const earthMesh = new THREE.Mesh(geometry, material);
+    scene.add(earthGroup);
+    earthGroup.add(earthMesh);
+
+    // Add the fresnel texture to the earth.
+    const glowMaterial = new THREE.ShaderMaterial({
+        vertexShader,  // vertexShader: vertexShader,
+        fragmentShader,  // fragmentShader: fragmentShader,
+        blending: THREE.AdditiveBlending,
+        side: THREE.BackSide,
+    })
+    const glowMesh = new THREE.Mesh(geometry, glowMaterial);
+    glowMesh.scale.set(1.1, 1.1, 1.1);
+    earthGroup.add(glowMesh);
+
+    // Add the city lights as a blended mesh.
+    const lightMaterial = new THREE.MeshBasicMaterial( {
+        map: textureLoad.load(earthMapLights), 
+        blending: THREE.CustomBlending,
+        blendEquation: THREE.AddEquation,
+        blendSrc: THREE.SrcColorFactor,
+        blendDst: THREE.OneFactor,
+        });
+    const lightMesh = new THREE.Mesh(geometry, lightMaterial);
+    earthGroup.add(lightMesh);
+
+    // Add the clouds as a blended mesh.
+    const cloudMaterial = new THREE.MeshBasicMaterial( {
+        map: textureLoad.load(earthMapClouds),
+        blending: THREE.CustomBlending,
+        blendEquation: THREE.AddEquation,
+        blendSrc: THREE.DstColorFactor,
+        blendDst: THREE.OneFactor,
+        });
+    const cloudMesh = new THREE.Mesh(geometry, cloudMaterial);
+    cloudMesh.scale.setScalar(1.003);
+    earthGroup.add(cloudMesh);
+
+    // Add stars.
+    const starsCoords = [];
+
+    for (let i = 0; i < 10000; i++) {
+        const x = THREE.MathUtils.randFloatSpread(2000);
+        const y = THREE.MathUtils.randFloatSpread(2000);
+        const z = THREE.MathUtils.randFloatSpread(2000);
+
+        starsCoords.push(x, y, z);
+    }
+
+    const starsGeometry = new THREE.BufferGeometry();
+    starsGeometry.setAttribute( 'position', new THREE.Float32BufferAttribute( starsCoords, 3 ) );
+    const starsMaterial = new THREE.PointsMaterial( { color: 0xaaaaaa } );
+    const stars = new THREE.Points( starsGeometry, starsMaterial );
+    scene.add( stars );
+    // Animation.
+    function animation(time) {
+        earthMesh.rotation.y = time / 8000;
+        lightMesh.rotation.y = time / 8000;
+        cloudMesh.rotation.y = time / 8000;
+        glowMesh.rotation.y = time / 8000;
+
+        renderer.render(scene, camera);
+    }
+    // Add light to the scene.
+  const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+  directionalLight.position.set(-4, 0.25, 2.5);
+  scene.add(directionalLight);
+}
+
+function profileDisplay() {
+    camera.position.z = 40;
+    renderer.setClearColor(new THREE.Color('#21282a'), 1);
+
+    // Objects.
+    const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
+    const material = new THREE.PointsMaterial({
+        size: 0.05
+    });
+    const torus = new THREE.Points(geometry, material);
+    scene.add(torus);
+    console.log(material);
+
+    const particleCoords = [];
+    for (let i = 0; i < 10000; i++) {
+        const x = THREE.MathUtils.randFloatSpread(1000);
+        const y = THREE.MathUtils.randFloatSpread(1000);
+        const z = THREE.MathUtils.randFloatSpread(1000);
+        particleCoords.push(x, y, z);
+    }
+
+    const particleGeometry = new THREE.BufferGeometry();
+    particleGeometry.setAttribute('position', new THREE.Float32BufferAttribute(particleCoords, 3));
+    const particleMaterial = new THREE.PointsMaterial({
+        size: 0.05,
+        // map: textureLoad.load('./pngForPoints.png'),
+        // transparent: true,
+        color: 0xaaaaaa,
+    });
+    const particles = new THREE.Points(particleGeometry, particleMaterial);
+    scene.add(particles);   // Use a custom png img instead. 10 by 10 px (alpha) w/ transparent background.
+
+    // Animation.
+    function animate() {
+        requestAnimationFrame(animate);
+        // torus.rotation.x += 0.01;
+        torus.rotation.y += 0.02;
+        torus.rotation.z += 0.01;
+
+        // Background responsive movement.
+        if (mouseMove) {
+            particles.rotation.y = (mouseY + mouseX) * 0.0003;
+        } else {
+            particles.rotation.x += 0.0005;
+            particles.rotation.y -= 0.0001;
+        }
+
+        // Render.
+        renderer.render(scene, camera);
+    }
+    animate();
+}
+
+function clearScene() {
+    while(scene.children.length > 0){ 
+        const object = scene.children[0];
+
+        if (object.isMesh) {
+            if (object.geometry) {
+                object.geometry.dispose();
+            }
+
+            if (object.material) {
+                
+                if (object.material.isMaterial) {
+                    cleanMaterial(object.material);
+                } else {
+                    // an array of materials
+                    for (const material of object.material) cleanMaterial(material);
+                }
+            }
+        }
+        
+        scene.remove(object);
+    }
+    // Clean any textures, materials, etc., not directly attached to scene objects...
+}
+function cleanMaterial(material) {
+    if (material.map) material.map.dispose();
+    if (material.lightMap) material.lightMap.dispose();
+    if (material.bumpMap) material.bumpMap.dispose();
+    if (material.normalMap) material.normalMap.dispose();
+    if (material.specularMap) material.specularMap.dispose();
+    if (material.envMap) material.envMap.dispose();
+    material.dispose();
+}
+
+switchBtn.addEventListener('click', () => {
+    backgroundCover.classList.toggle('hidden');
+
+    // Setup 2 displays:
+    if (backgroundCover.classList.contains('hidden')) {
+        clearScene();
+        // cleanMaterial(material);
+        earthDisplay();
+        } else {
+            clearScene();
+            profileDisplay();
+        }
+    })
 
 
 /*
