@@ -2,8 +2,9 @@
   "name": "earth-demo",
   "version": "1.0.0",
   "description": "",
-  "main": "earthDemo.js",
+  "main": "main.js",
   "type": "module",
+  "homepage": "https://fabsanjuan.github.io/earth-demo/",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vite",

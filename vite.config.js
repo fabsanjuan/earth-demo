@@ -7,4 +7,9 @@ export default defineConfig({
     ],
     root: './',
     base: '/earth-demo/',
+    build: {
+        rollupOptions: {
+            input: './src/main.js'
+        }
+    }
 })
